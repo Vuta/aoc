@@ -10,6 +10,7 @@ import (
 type Set struct {
 	list []int
 	maxLen int
+	total int
 }
 
 // sorted in desc order
@@ -31,23 +32,16 @@ func (s *Set) insert(element int) {
 		s.list[index] = element
 	}
 
+	temp := 0
 	if len(s.list) > s.maxLen {
+		temp = s.list[s.maxLen]
 		s.list = s.list[:s.maxLen]
 	}
-}
-
-func (s *Set) total() int {
-	result := 0
-	for _, val := range s.list {
-		result += val
-	}
-
-	return result
+	s.total = s.total + element - temp
 }
 
 func main() {
 	input, _ := os.ReadFile("input/day1.txt")
-
 	fmt.Println(part_1(string(input)))
 	fmt.Println(part_2(string(input)))
 }
@@ -85,5 +79,5 @@ func part_2(input string) int {
 		result.insert(count)
 	}
 
-	return result.total()
+	return result.total
 }
