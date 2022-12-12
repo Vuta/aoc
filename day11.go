@@ -51,6 +51,7 @@ func part_2(input string) {
 				item := monkey.items[0]
 				monkey.items = monkey.items[1:]
 
+				// a mod n == (a mod b) mod n when b = kn
 				newItem := monkey.operate(item) % moduloProduct
 				monkey.throw(newItem, monkeys)
 				result[monkey]++
