@@ -12,13 +12,14 @@ type Point struct {
 }
 
 func main() {
-	// input, _ := os.ReadFile("temp.txt")
 	input, _ := os.ReadFile("input/day14.txt")
 	input = input[:len(input)-1]
 
 	fmt.Println(part_1(string(input)))
+	fmt.Println(part_2(string(input)))
 }
 
+// It's much much easier to solve with a map than a 2D array, but I only realized that when working on part 2, and I'm too lazy now to update part 1
 func part_1(input string) int {
 	grid, startPoint := buildGrid(input)
 	found := false
@@ -36,6 +37,67 @@ func part_1(input string) int {
 	}
 
 	return count
+}
+
+func part_2(input string) int {
+	grid, startPoint := buildGrid(input)
+	mapping := make(map[Point]string)
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[0]); j++ {
+			p := Point{i,j}
+			if grid[i][j] == "#" {
+				mapping[p] = "#" 
+			}
+		}
+	}
+
+	maxRow := len(grid)+1
+	return move2(startPoint.x, startPoint.y, mapping, maxRow)
+}
+
+func move2(x, y int, mapping map[Point]string, maxRow int) int {
+	count := 0
+	for mapping[Point{x,y}] != "o" {
+		current := Point{x,y}
+		for mapping[current] != "o" && current.x < maxRow-1 {
+			if canMoveDown2(current, mapping) {
+				current = Point{current.x+1, current.y}
+				continue
+			}
+
+			if canMoveLeft2(current, mapping) {
+				current = Point{current.x+1, current.y-1}
+				continue
+			}
+
+			if canMoveRight2(current, mapping) {
+				current = Point{current.x+1, current.y+1}
+				continue
+			}
+
+			mapping[current] = "o"
+			count++
+		}
+
+		if current.x == maxRow-1 {
+			mapping[current] = "o"
+			count++
+		}
+	}
+
+	return count
+}
+
+func canMoveDown2(current Point, mapping map[Point]string) bool {
+	return mapping[Point{current.x+1, current.y}] != "#" && mapping[Point{current.x+1, current.y}] != "o"
+}
+
+func canMoveLeft2(current Point, mapping map[Point]string) bool {
+	return mapping[Point{current.x+1, current.y-1}] != "#" && mapping[Point{current.x+1, current.y-1}] != "o"
+}
+
+func canMoveRight2(current Point, mapping map[Point]string) bool {
+	return mapping[Point{current.x+1, current.y+1}] != "#" && mapping[Point{current.x+1, current.y+1}] != "o"
 }
 
 func move(s Point, grid [][]string) ([][]string, bool) {
